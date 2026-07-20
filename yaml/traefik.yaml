@@ -1,0 +1,107 @@
+## IngressRoute — routes all SUOP services through Traefik at the server's public IP
+## UBS web UI   : http://<IP>/
+## UBS API      : http://<IP>/api/
+## MDM API      : http://<IP>/mdm/
+## SwensaAdmin  : http://<IP>/admin/
+## ServeizCloud : http://<IP>/cloud/
+## HES Simulator: http://<IP>/hes/
+
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: suop-ubs
+  namespace: default
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`_IPADDRESS_`) && PathPrefix(`/`)
+      priority: 1
+      services:
+        - name: ubs-service
+          namespace: default
+          port: 3000
+    - kind: Rule
+      match: Host(`_IPADDRESS_`) && PathPrefix(`/api`)
+      priority: 10
+      services:
+        - name: ubs-service
+          namespace: default
+          port: 8080
+    - kind: Rule
+      match: Host(`_IPADDRESS_`) && PathPrefix(`/mdm`)
+      priority: 10
+      middlewares:
+        - name: mdm-strip
+      services:
+        - name: mdm-service
+          namespace: default
+          port: 8090
+    - kind: Rule
+      match: Host(`_IPADDRESS_`) && PathPrefix(`/admin`)
+      priority: 10
+      middlewares:
+        - name: admin-strip
+      services:
+        - name: swensa-admin-service
+          namespace: default
+          port: 3003
+    - kind: Rule
+      match: Host(`_IPADDRESS_`) && PathPrefix(`/cloud`)
+      priority: 10
+      middlewares:
+        - name: cloud-strip
+      services:
+        - name: serveiz-cloud-service
+          namespace: default
+          port: 8070
+    - kind: Rule
+      match: Host(`_IPADDRESS_`) && PathPrefix(`/hes`)
+      priority: 10
+      middlewares:
+        - name: hes-strip
+      services:
+        - name: hes-simulator-service
+          namespace: default
+          port: 9090
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: mdm-strip
+  namespace: default
+spec:
+  stripPrefix:
+    prefixes:
+      - /mdm
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: admin-strip
+  namespace: default
+spec:
+  stripPrefix:
+    prefixes:
+      - /admin
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: cloud-strip
+  namespace: default
+spec:
+  stripPrefix:
+    prefixes:
+      - /cloud
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: hes-strip
+  namespace: default
+spec:
+  stripPrefix:
+    prefixes:
+      - /hes

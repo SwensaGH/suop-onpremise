@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: swensa-admin-service
+  namespace: default
+spec:
+  ports:
+    - port: 8085
+      targetPort: 8085
+      name: api
+    - port: 3003
+      targetPort: 3003
+      name: web
+  selector:
+    app: swensa-admin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swensa-admin-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: swensa-admin
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: swensa-admin
+    spec:
+      containers:
+        - name: swensa-admin
+          image: swensadocker/swensa-admin:_ADMINIMAGE_
+          ports:
+            - containerPort: 8085
+              name: api
+            - containerPort: 3003
+              name: web
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql:3306/swensa_admin_db?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: _GENERATE_PASSWORD_
+            - name: UBS_BASE_URL
+              value: http://ubs-service:8080
+            - name: MDM_BASE_URL
+              value: http://mdm-service:8090
+            - name: APP_INTERNAL_KEY
+              value: _INTERNAL_KEY_
+            - name: JWT_SECRET
+              value: _JWT_SECRET_
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8085
+            initialDelaySeconds: 45
+            periodSeconds: 10

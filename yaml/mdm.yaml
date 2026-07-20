@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mdm-service
+  namespace: default
+spec:
+  ports:
+    - port: 8090
+      targetPort: 8090
+      name: api
+  selector:
+    app: mdm
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdm-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mdm
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mdm
+    spec:
+      containers:
+        - name: mdm
+          image: swensadocker/serveiz-mdm:_MDMIMAGE_
+          ports:
+            - containerPort: 8090
+              name: api
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/mdmdb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: _GENERATE_PG_PASSWORD_
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: kafka-service:9092
+            - name: APP_INTERNAL_KEY
+              value: _INTERNAL_KEY_
+            - name: JWT_SECRET
+              value: _JWT_SECRET_
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8090
+            initialDelaySeconds: 45
+            periodSeconds: 10

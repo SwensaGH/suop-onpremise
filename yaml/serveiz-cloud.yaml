@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: serveiz-cloud-service
+  namespace: default
+spec:
+  ports:
+    - port: 8070
+      targetPort: 8070
+      name: api
+  selector:
+    app: serveiz-cloud
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serveiz-cloud-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: serveiz-cloud
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: serveiz-cloud
+    spec:
+      containers:
+        - name: serveiz-cloud
+          image: swensadocker/serveiz-cloud:_CLOUDIMAGE_
+          ports:
+            - containerPort: 8070
+              name: api
+          env:
+            - name: UBS_BASE_URL
+              value: http://ubs-service:8080
+            - name: MDM_BASE_URL
+              value: http://mdm-service:8090
+            - name: JWT_SECRET
+              value: _JWT_SECRET_
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8070
+            initialDelaySeconds: 45
+            periodSeconds: 10
