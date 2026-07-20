@@ -30,28 +30,11 @@ for pkg in "${PACKAGES[@]}"; do
 done
 
 # ============================================================
-# Gather customer info
+# Gather platform admin info (Swensa staff account only)
+# Customers are added later via the Swensa Admin portal.
 # ============================================================
 while true; do
-    echo -n "Enter customer code (e.g. ACME_WATER): "
-    read cid
-    echo -n "Re-enter customer code: "
-    read confirmcid
-    [ "$cid" == "$confirmcid" ] && break
-    echo "Customer codes don't match. Try again."
-done
-export CUSTOMER_CODE="$cid"
-echo "Customer code set as: $CUSTOMER_CODE"
-
-while true; do
-    echo -n "Enter customer name (e.g. Acme Water District): "
-    read customer_name
-    [ -n "$customer_name" ] && break
-    echo "Customer name cannot be empty."
-done
-
-while true; do
-    echo -n "Enter platform admin email: "
+    echo -n "Enter Swensa platform admin email: "
     read email
     echo -n "Re-enter email: "
     read confirmemail
@@ -261,25 +244,28 @@ echo "Waiting 60s for application startup..."
 sleep 60
 
 # ============================================================
-# Provision first tenant via Swensa Admin
+# Create Swensa platform admin account
+# (Customers are NOT provisioned here — use Swensa Admin UI)
 # ============================================================
 echo "------------------------------------------"
-echo "Provisioning first tenant in SUOP..."
+echo "Creating Swensa platform admin account..."
 echo "------------------------------------------"
 
 ADMIN_URL="http://${ip}/admin/api"
 
-# Seed Swensa Admin platform admin user (direct DB insert)
-MYSQL_POD=$(kubectl get pods -l app=mysql -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
-if [ -n "$MYSQL_POD" ]; then
-    # Create swensa_admin_db if not created by Spring
-    kubectl exec -i "$MYSQL_POD" -- mysql -uroot -p"${mysql_password}" -e \
-        "CREATE DATABASE IF NOT EXISTS swensa_admin_db;" >>$log 2>&1
-    echo "  ✓ swensa_admin_db ensured"
-fi
+# Wait for swensa-admin to be responsive
+echo -n "Waiting for Swensa Admin to be ready"
+for i in $(seq 1 30); do
+    status=$(curl -s -o /dev/null -w "%{http_code}" "${ADMIN_URL}/actuator/health" 2>/dev/null)
+    if [ "$status" == "200" ]; then
+        echo " ready."
+        break
+    fi
+    echo -n "."
+    sleep 5
+done
 
-# Register platform admin via Swensa Admin API
-echo "Creating platform admin user..."
+# Register the Swensa staff admin user
 http_response=$(curl -s -X POST "${ADMIN_URL}/auth/register" \
     -H 'Content-Type: application/json' \
     -d "{
@@ -287,23 +273,14 @@ http_response=$(curl -s -X POST "${ADMIN_URL}/auth/register" \
         \"password\": \"${admin_password}\",
         \"username\": \"swensa_admin\"
     }")
-
 echo "  Admin registration response: ${http_response}" >>$log
 
-# Provision first tenant (UBS + MDM)
-echo "Provisioning tenant ${CUSTOMER_CODE}..."
-provision_response=$(curl -s -X POST "${ADMIN_URL}/tenants/provision" \
-    -H 'Content-Type: application/json' \
-    -d "{
-        \"code\": \"${CUSTOMER_CODE}\",
-        \"name\": \"${customer_name}\",
-        \"timezone\": \"America/Chicago\",
-        \"adminEmail\": \"${email}\",
-        \"adminUsername\": \"${CUSTOMER_CODE,,}_admin\",
-        \"adminPassword\": \"${admin_password}\",
-        \"products\": [\"UBS\", \"MDM\"]
-    }")
-echo "  Provision response: ${provision_response}" >>$log
+if echo "$http_response" | grep -qi "success\|created\|id"; then
+    echo "  ✓ Platform admin account created"
+else
+    echo "  Warning: Could not auto-create admin account. Log in to Swensa Admin and register manually." >&2
+    echo "  Response was: ${http_response}" >&2
+fi
 
 # ============================================================
 # Setup cron jobs for maintenance
@@ -329,26 +306,32 @@ echo "============================================================"
 echo "  SUOP Installation Complete!"
 echo "============================================================"
 echo ""
-echo "  Platform URL:    http://${ip}/"
-echo "  Admin Portal:    http://${ip}/admin/"
-echo "  MDM API:         http://${ip}/mdm/"
-echo "  Field Service:   http://${ip}/cloud/"
+echo "  Swensa Admin Portal:  http://${ip}/admin/"
+echo "  UBS (Billing):        http://${ip}/"
+echo "  MDM API:              http://${ip}/mdm/"
+echo "  Field Service:        http://${ip}/cloud/"
 echo ""
-echo "  Platform Admin:"
+echo "  Swensa Staff Login:"
 echo "    Email:    ${email}"
 echo "    Password: ${admin_password}"
 echo ""
-echo "  Tenant:    ${CUSTOMER_CODE} (${customer_name})"
-echo "  DB Passwords saved to: /opt/suop/.credentials"
+echo "  Next step: Log in to Swensa Admin and create your first"
+echo "  customer tenant. The platform is ready to host multiple"
+echo "  customers — each is provisioned independently via the UI."
 echo ""
+echo "  DB credentials saved to: /opt/suop/.credentials"
 echo "============================================================"
 
 # Save credentials to file for recovery
 cat > /opt/suop/.credentials <<CREDS
-CUSTOMER_CODE=${CUSTOMER_CODE}
-CUSTOMER_NAME=${customer_name}
-ADMIN_EMAIL=${email}
-ADMIN_PASSWORD=${admin_password}
+# SUOP Platform Credentials
+# Generated during installation — keep this file secure (chmod 600)
+#
+# These are PLATFORM-LEVEL secrets. Customer accounts are managed
+# via the Swensa Admin portal at http://${ip}/admin/
+
+SWENSA_ADMIN_EMAIL=${email}
+SWENSA_ADMIN_PASSWORD=${admin_password}
 MYSQL_ROOT_PASSWORD=${mysql_password}
 POSTGRES_PASSWORD=${pg_password}
 INTERNAL_KEY=${internal_key}
