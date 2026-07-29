@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
         - name: swensa-admin
-          image: swensadocker/swensa-admin:_ADMINIMAGE_
+          image: swensadocker/serveiz-admin-backend:latest
           ports:
             - containerPort: 8085
               name: api
