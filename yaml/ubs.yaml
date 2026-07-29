@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
         - name: ubs
-          image: swensadocker/ubs:_UBSIMAGE_
+          image: swensadocker/ubs-app:4
           ports:
             - containerPort: 8080
               name: api
