@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: serveiz-cloud
-          image: swensadocker/serveiz-cloud:_CLOUDIMAGE_
+          image: scswap:1.0.0-dev-31
           ports:
             - containerPort: 8070
               name: api
