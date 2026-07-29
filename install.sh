@@ -149,11 +149,11 @@ echo "  ServeizCloud:  ${cloud_image}"
 echo "  SwensaAdmin:   ${admin_image}"
 echo "  HES Simulator: ${hes_image}"
 
-sed -i "s/_MDMIMAGE_/${mdm_image}/g"     ${YAML_DIR}/mdm.yaml
-sed -i "s/_UBSIMAGE_/${ubs_image}/g"     ${YAML_DIR}/ubs.yaml
-sed -i "s/_CLOUDIMAGE_/${cloud_image}/g" ${YAML_DIR}/serveiz-cloud.yaml
-sed -i "s/_ADMINIMAGE_/${admin_image}/g" ${YAML_DIR}/swensa-admin.yaml
-sed -i "s/_HESIMAGE_/${hes_image}/g"     ${YAML_DIR}/hes-simulator.yaml
+#sed -i "s/_MDMIMAGE_/${mdm_image}/g"     ${YAML_DIR}/mdm.yaml
+#sed -i "s/_UBSIMAGE_/${ubs_image}/g"     ${YAML_DIR}/ubs.yaml
+#sed -i "s/_CLOUDIMAGE_/${cloud_image}/g" ${YAML_DIR}/serveiz-cloud.yaml
+#sed -i "s/_ADMINIMAGE_/${admin_image}/g" ${YAML_DIR}/swensa-admin.yaml
+#sed -i "s/_HESIMAGE_/${hes_image}/g"     ${YAML_DIR}/hes-simulator.yaml
 
 # ============================================================
 # Detect public IP (AWS EC2 metadata, falls back to ifconfig)
