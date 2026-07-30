@@ -58,6 +58,7 @@ if [ -f "$CRED_FILE" ]; then
     internal_key="$INTERNAL_KEY"
     jwt_secret="$JWT_SECRET"
     admin_password="Admin@123"
+    sudo sed -i 's/^SWENSA_ADMIN_PASSWORD=.*/SWENSA_ADMIN_PASSWORD=Admin@123/' "$CRED_FILE"
 else
     echo "Generating new credentials..."
 
