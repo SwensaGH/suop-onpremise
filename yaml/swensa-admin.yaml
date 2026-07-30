@@ -32,13 +32,11 @@ spec:
         app: swensa-admin
     spec:
       containers:
-        - name: swensa-admin
+        - name: swensa-admin-backend
           image: swensadocker/serveiz-admin-backend:latest
           ports:
             - containerPort: 8085
               name: api
-            - containerPort: 3003
-              name: web
           env:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:mysql://mysql:3306/swensa_admin_db?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
@@ -54,6 +52,12 @@ spec:
               value: _INTERNAL_KEY_
             - name: JWT_SECRET
               value: _JWT_SECRET_
+        - name: swensa-admin-frontend
+          image: swensadocker/serveiz-admin-frontend:latest
+          ports:
+            - containerPort: 3003
+              name: web
+          
           resources:
             requests:
               memory: "512Mi"
