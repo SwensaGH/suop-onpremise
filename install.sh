@@ -57,14 +57,16 @@ if [ -f "$CRED_FILE" ]; then
     #admin_password="$SWENSA_ADMIN_PASSWORD"
     internal_key="$INTERNAL_KEY"
     jwt_secret="$JWT_SECRET"
-    admin_password="Admin@123"
-    sudo sed -i 's/^SWENSA_ADMIN_PASSWORD=.*/SWENSA_ADMIN_PASSWORD=Admin@123/' "$CRED_FILE"
+    admin_password="${SWENSA_ADMIN_PASSWORD:-Admin@123}"
+
+    sudo sed -i "s/^SWENSA_ADMIN_PASSWORD=.*/SWENSA_ADMIN_PASSWORD=$admin_password/" "$CRED_FILE"
 else
     echo "Generating new credentials..."
 
     mysql_password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16)
     pg_password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16)
-    #admin_password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13)
+    #admin_password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13
+    admin_password="Admin@123"
     internal_key=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 32)
     jwt_secret=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 64)
 fi
