@@ -281,7 +281,7 @@ for i in $(seq 1 30); do
 done
 
 # Register the Swensa staff admin user
-http_response=$(curl -s -X POST "${ADMIN_URL}/auth/register" \
+http_response=$(curl -s -X POST "${ADMIN_URL}/auth/login" \
     -H 'Content-Type: application/json' \
     -d "{
         \"email\": \"${email}\",
