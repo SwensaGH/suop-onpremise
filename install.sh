@@ -45,12 +45,27 @@ done
 # ============================================================
 # Generate secrets
 # ============================================================
-echo "Generating secrets..."
-mysql_password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16; echo '')
-pg_password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16; echo '')
-admin_password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13; echo '')
-internal_key=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 32; echo '')
-jwt_secret=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 64; echo '')
+
+CRED_FILE="/opt/suop/.credentials"
+
+if [ -f "$CRED_FILE" ]; then
+    echo "Using existing credentials..."
+    source "$CRED_FILE"
+
+    mysql_password="$MYSQL_ROOT_PASSWORD"
+    pg_password="$POSTGRES_PASSWORD"
+    admin_password="$SWENSA_ADMIN_PASSWORD"
+    internal_key="$INTERNAL_KEY"
+    jwt_secret="$JWT_SECRET"
+else
+    echo "Generating new credentials..."
+
+    mysql_password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16)
+    pg_password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16)
+    admin_password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13)
+    internal_key=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 32)
+    jwt_secret=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 64)
+fi
 
 # ============================================================
 # Install K3s
