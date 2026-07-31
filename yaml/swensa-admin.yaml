@@ -4,6 +4,7 @@ metadata:
   name: swensa-admin-service
   namespace: default
 spec:
+  type: NodePort 
   ports:
     - port: 8085
       targetPort: 8085
