@@ -8,6 +8,9 @@ spec:
     - port: 8090
       targetPort: 8090
       name: api
+    - port: 3005
+      targetPort: 3005
+      name: web
   selector:
     app: mdm
 ---
@@ -29,7 +32,7 @@ spec:
         app: mdm
     spec:
       containers:
-        - name: mdm
+        - name: mdm-backend
           image: swensadocker/serveiz-mdm-backend:latest
           ports:
             - containerPort: 8090
@@ -47,6 +50,11 @@ spec:
               value: _INTERNAL_KEY_
             - name: JWT_SECRET
               value: _JWT_SECRET_
+        - name: swensa-mdm-frontend 
+          image: swensadocker/serveiz-mdm-frontend:latest
+          ports:
+             - containerPort: 3005 
+               name: web
           resources:
             requests:
               memory: "512Mi"
