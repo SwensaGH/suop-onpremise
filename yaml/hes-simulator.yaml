@@ -30,13 +30,23 @@ spec:
     spec:
       containers:
         - name: hes-simulator
-          image: swensadocker/hes-simulator:_HESIMAGE_
+          image: swensadocker/utility-data-simulator:latest
           ports:
             - containerPort: 9090
               name: api
           env:
             - name: MDM_BASE_URL
-              value: http://mdm-service:8090
+              value: "http://mdm-service:8090"
+            - name: UBS_URL
+              value: "http://ubs-service:8080"
+            - name: SEED_COUNT
+              value: "100"
+            - name: SEED_PER_CYCLE
+              value: "100"
+            - name: BACKFILL_DAYS
+              value: "3"
+            - name: FEED_INTERVAL_MINUTES
+              value: "15"
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: kafka-service:9092
           resources:
