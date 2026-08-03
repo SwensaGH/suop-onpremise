@@ -8,8 +8,8 @@ spec:
     - port: 8090
       targetPort: 8090
       name: api
-    - port: 3005
-      targetPort: 3005
+    - port: 3002
+      targetPort: 3002
       name: web
   selector:
     app: mdm
@@ -53,7 +53,7 @@ spec:
         - name: swensa-mdm-frontend 
           image: swensadocker/serveiz-mdm-frontend:latest
           ports:
-             - containerPort: 3005 
+             - containerPort: 3002 
                name: web
           resources:
             requests:
