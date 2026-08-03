@@ -4,6 +4,7 @@ metadata:
   name: ubs-service
   namespace: default
 spec:
+  type: NodePort
   ports:
     - port: 8080
       targetPort: 8080
