@@ -4,6 +4,7 @@ metadata:
   name: mdm-service
   namespace: default
 spec:
+  type: NodePort
   ports:
     - port: 8090
       targetPort: 8090
