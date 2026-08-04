@@ -39,6 +39,7 @@ spec:
             - containerPort: 8080
               name: api
             - containerPort: 3000
+              hostPort: 3000
               name: web
           env:
             - name: SPRING_DATASOURCE_URL
