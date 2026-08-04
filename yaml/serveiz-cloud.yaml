@@ -5,9 +5,9 @@ metadata:
   namespace: default
 spec:
   ports:
-    - port: 8070
-      targetPort: 8070
-      name: api
+    - port: 80
+      targetPort: 80
+      name: web
   selector:
     app: serveiz-cloud
 ---
@@ -32,8 +32,9 @@ spec:
         - name: serveiz-cloud
           image: swensadocker/scswap:1.0.0-staging-74
           ports:
-            - containerPort: 8070
-              name: api
+            - containerPort: 80
+              hostPort: 8081
+              name: web
           env:
             - name: UBS_BASE_URL
               value: http://ubs-service:8080
@@ -50,7 +51,7 @@ spec:
               cpu: "500m"
           readinessProbe:
             httpGet:
-              path: /actuator/health
-              port: 8070
+              path: /
+              port: 80
             initialDelaySeconds: 45
             periodSeconds: 10
