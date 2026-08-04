@@ -55,6 +55,7 @@ spec:
           image: swensadocker/serveiz-mdm-frontend:latest
           ports:
              - containerPort: 3002 
+               hostPort: 3002
                name: web
           resources:
             requests:
