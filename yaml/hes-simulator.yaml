@@ -35,7 +35,7 @@ spec:
             - containerPort: 9090
               name: api
           env:
-            - name: MDM_BASE_URL
+            - name: MDM_URL
               value: "http://mdm-service:8090"
             - name: UBS_URL
               value: "http://ubs-service:8080"
