@@ -4,7 +4,6 @@ metadata:
   name: mdm-service
   namespace: default
 spec:
-  type: NodePort
   ports:
     - port: 8090
       targetPort: 8090
@@ -55,7 +54,6 @@ spec:
           image: swensadocker/serveiz-mdm-frontend:latest
           ports:
              - containerPort: 3002 
-               hostPort: 3002
                name: web
           resources:
             requests:
