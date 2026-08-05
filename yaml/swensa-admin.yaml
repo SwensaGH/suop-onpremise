@@ -45,9 +45,9 @@ spec:
               value: root
             - name: SPRING_DATASOURCE_PASSWORD
               value: _GENERATE_PASSWORD_
-            - name: UBS_BASE_URL
+            - name: UBS_URL
               value: http://ubs-service:8080
-            - name: MDM_BASE_URL
+            - name: MDM_URL
               value: http://mdm-service:8090
             - name: APP_INTERNAL_KEY
               value: _INTERNAL_KEY_
