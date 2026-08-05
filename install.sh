@@ -359,4 +359,7 @@ SERVER_IP=${ip}
 CREDS
 chmod 600 /opt/suop/.credentials
 
+sudo chown -R 1000:1000 /opt/suop/kafkadata
+sudo chmod -R 755 /opt/suop/kafkadata
+
 echo "Installation log: $log"
