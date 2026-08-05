@@ -4,7 +4,6 @@ metadata:
   name: ubs-service
   namespace: default
 spec:
-  type: NodePort
   ports:
     - port: 8080
       targetPort: 8080
@@ -39,7 +38,6 @@ spec:
             - containerPort: 8080
               name: api
             - containerPort: 3000
-              hostPort: 3000
               name: web
           env:
             - name: SPRING_DATASOURCE_URL
