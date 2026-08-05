@@ -48,7 +48,7 @@ spec:
               value: _GENERATE_PASSWORD_
             - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
               value: kafka-service:9092
-            - name: MDM_BASE_URL
+            - name: MDM_URL
               value: http://mdm-service:8090
             - name: APP_INTERNAL_KEY
               value: _INTERNAL_KEY_
