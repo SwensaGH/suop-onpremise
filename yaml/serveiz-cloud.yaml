@@ -35,9 +35,9 @@ spec:
             - containerPort: 80
               name: web
           env:
-            - name: UBS_BASE_URL
+            - name: UBS_URL
               value: http://ubs-service:8080
-            - name: MDM_BASE_URL
+            - name: MDM_URL
               value: http://mdm-service:8090
             - name: JWT_SECRET
               value: _JWT_SECRET_
