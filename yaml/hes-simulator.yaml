@@ -35,20 +35,30 @@ spec:
             - containerPort: 9090
               name: api
           env:
-            - name: MDM_URL
-              value: "http://mdm-service:8090"
             - name: UBS_URL
-              value: "http://ubs-service:8080"
+              value: "http://host.docker.internal:8080"
+            - name: MDM_URL
+              value: "http://host.docker.internal:8090"
+            - name: UBS_USER
+              value: "test"
+            - name: UBS_PASS
+              value: "Admin@123"
+            - name: MDM_USER
+              value: "admin"
+            - name: MDM_PASS
+              value: "admin123"
+            - name: MDM_TENANT_ID
+              value: "4"
+            - name: MDM_TENANT_CODE
+              value: "TS"
             - name: SEED_COUNT
-              value: "100"
+              value: "1"
             - name: SEED_PER_CYCLE
-              value: "100"
-            - name: BACKFILL_DAYS
-              value: "3"
-            - name: FEED_INTERVAL_MINUTES
-              value: "15"
-            - name: KAFKA_BOOTSTRAP_SERVERS
-              value: kafka-service:9092
+              value: "0"
+            - name: FEED_METER_LIMIT
+              value: "1"
+            - name: RUN_SETUP_ON_START
+              value: "true"
           resources:
             requests:
               memory: "256Mi"
