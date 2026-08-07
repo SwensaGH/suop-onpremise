@@ -36,11 +36,11 @@ spec:
               name: api
           env:
             - name: UBS_URL
-              value: "http://host.docker.internal:8080"
+              value: "http://ubs-service:8080"
             - name: MDM_URL
-              value: "http://host.docker.internal:8090"
+              value: "http://mdm-service:8090"
             - name: UBS_USER
-              value: "test"
+              value: "admin"
             - name: UBS_PASS
               value: "Admin@123"
             - name: MDM_USER
@@ -48,9 +48,9 @@ spec:
             - name: MDM_PASS
               value: "admin123"
             - name: MDM_TENANT_ID
-              value: "4"
+              value: "1"
             - name: MDM_TENANT_CODE
-              value: "TS"
+              value: "SERVEIZ"
             - name: SEED_COUNT
               value: "1"
             - name: SEED_PER_CYCLE
