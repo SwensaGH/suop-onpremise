@@ -1,0 +1,24 @@
+# Serveiz Integration Layer Configuration Template
+# Generated at install time — modify for external system integrations
+sil:
+  boundary_a:
+    inbound:
+      source_system: "SERVEIZ_MDM"   # Change to ITRON_RIVA, ORACLE_MDM, etc. for external MDM
+      transport: REST                  # REST | KAFKA
+      auth:
+        type: internal                 # internal | shared_key | oauth2
+        header: "X-SIL-Key"
+        value: "${SIL_INBOUND_KEY}"   # Set via env var or .credentials
+      field_map: {}                    # Add field mappings for external systems
+      value_map: {}
+    outbound:
+      enabled: false
+      transport: KAFKA
+      topic: "sil.meter-reads.outbound"
+
+  boundary_b:
+    source_system: "SERVEIZ_UBS"     # SERVEIZ_UBS | CAYENTA | TYLER_MUNIS
+    transport: REST
+    base_url: "http://localhost:8080/api/portal/v1"
+    auth:
+      type: internal                   # internal | jwt | oauth2 | api_key
