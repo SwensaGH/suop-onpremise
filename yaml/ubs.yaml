@@ -48,6 +48,8 @@ spec:
               value: _GENERATE_PASSWORD_
             - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
               value: kafka-service:9092
+            - name: PASSWORD_RESET_URL
+              value: http://ubs-service:3000
             - name: MDM_URL
               value: http://mdm-service:8090
             - name: APP_INTERNAL_KEY
